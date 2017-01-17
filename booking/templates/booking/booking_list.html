@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<table>
+    <tr>
+        <th>Organisation</th>
+        <th>État</th>
+        <th>Contact</th>
+        <th>Email</th>
+        <th>Tel</th>
+    </tr>
+    {% for booking in booking_list %}
+        <tr>
+            <td>{{ booking.organization }}</td>
+            <td>{{ booking.state.label }}</td>
+            <td>{{ booking.contact }}</td>
+            <td>{{ booking.email }}</td>
+            <td>{{ booking.tel }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock content %}
+

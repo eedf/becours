@@ -82,10 +82,11 @@ class BookingState(models.Model):
     title = models.CharField(verbose_name="Intitulé", max_length=100)
 
     class Meta:
-        verbose_name = "État"
+        verbose_name = "Statut"
+        ordering = ('title', )
 
     def __str__(self):
-        return self.label
+        return self.title
 
 
 class Booking(TrackingMixin, models.Model):
@@ -95,13 +96,14 @@ class Booking(TrackingMixin, models.Model):
         (3, "Scouts étrangers"),
         (4, "Association"),
         (5, "Particulier"),
+        (6, "Scolaires"),
     )
     title = models.CharField(verbose_name="Intitulé", max_length=100, blank=True)
     org_type = models.IntegerField(verbose_name="Type d'organisation", choices=ORG_TYPE_CHOICES, blank=True, null=True)
     contact = models.CharField(verbose_name="Contact", max_length=100, blank=True)
     email = models.EmailField(verbose_name="Email", blank=True)
     tel = models.CharField(verbose_name="Téléphone", max_length=12, blank=True)
-    state = models.ForeignKey(BookingState, blank=True, null=True)
+    state = models.ForeignKey(BookingState, verbose_name="Statut", blank=True, null=True)
     description = models.TextField(verbose_name="Description", blank=True)
     agreement = models.ForeignKey(Agreement, verbose_name="Convention", blank=True, null=True)
 
@@ -109,7 +111,7 @@ class Booking(TrackingMixin, models.Model):
         verbose_name = "Réservation"
 
     def __str__(self):
-        return self.organization
+        return self.title
 
 
 class BookingItem(TrackingMixin, models.Model):

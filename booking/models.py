@@ -70,12 +70,20 @@ class TrackingMixin(object):
 
 
 class Agreement(models.Model):
-    date = models.DateField()
-    order = models.IntegerField()
-    file = models.FileField(upload_to='conventions')
+    date = models.DateField(verbose_name="Date")
+    order = models.IntegerField(verbose_name="Numéro d'ordre")
+    odt = models.FileField(upload_to='conventions', blank=True)
+    pdf = models.FileField(upload_to='conventions', blank=True)
 
     class Meta:
         verbose_name = "Convention"
+
+    def number(self):
+        return "{year}-{order:03}".format(year=self.date.year, order=self.order)
+    number.short_description = "Numéro"
+
+    def __str__(self):
+        return self.number()
 
 
 class BookingState(models.Model):
@@ -105,7 +113,7 @@ class Booking(TrackingMixin, models.Model):
     tel = models.CharField(verbose_name="Téléphone", max_length=12, blank=True)
     state = models.ForeignKey(BookingState, verbose_name="Statut", blank=True, null=True)
     description = models.TextField(verbose_name="Description", blank=True)
-    agreement = models.ForeignKey(Agreement, verbose_name="Convention", blank=True, null=True)
+    agreement = models.OneToOneField(Agreement, verbose_name="Convention", blank=True, null=True)
 
     class Meta:
         verbose_name = "Réservation"

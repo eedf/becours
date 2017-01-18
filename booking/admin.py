@@ -9,7 +9,7 @@ class BookingStateAdmin(admin.ModelAdmin):
 
 @admin.register(Agreement)
 class AgreementAdmin(admin.ModelAdmin):
-    list_display = ('date', 'order', 'file')
+    list_display = ('number', 'date')
 
 
 class BookingItemInline(admin.TabularInline):

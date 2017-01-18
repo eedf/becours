@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h1>{{ booking.title }}</h1>
+
+    <table class="table table-striped table-hover table-condensed">
+        <tr>
+            <th>Statut</th>
+            <td>{{ booking.state.title }}</td>
+        </tr>
+        <tr>
+            <th>Contact</th>
+            <td><a href="mailto:{{ booking.email }}">{{ booking.contact }}</a></td>
+        </tr>
+        <tr>
+            <th>Tel</th>
+            <td>{{ booking.tel }}</td>
+        </tr>
+        <tr>
+            <th>Dates</th>
+            <td>du {{ booking.begin|date:'D d/m/y' }} au {{ booking.end|date:'D d/m/y' }}</td>
+        </tr>
+        <tr>
+            <th>Nuits</th>
+            <td>{{ booking.nights|default_if_none:"" }}</td>
+        </tr>
+        <tr>
+            <th>Effectif</th>
+            <td>{{ booking.headcount|default_if_none:"" }}</td>
+        </tr>
+        <tr>
+            <th>Nuitées</th>
+            <td>{{ booking.overnights|default_if_none:"" }}</td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <td>{% if booking.total %}{{ booking.total|floatformat:2 }} €{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Arrhes</th>
+            <td>{% if booking.deposit %}{{ booking.deposit|floatformat:2 }} €{%  endif %}</td>
+        </tr>
+        <tr>
+            <th>Paiement</th>
+            <td>{% if booking.payment %}{{ booking.payment|floatformat:2 }} €{%  endif %}</td>
+        </tr>
+        <tr>
+            <th>Solde</th>
+            <td>{% if booking.balance %}{{ booking.balance|floatformat:2 }} €{%  endif %}</td>
+        </tr>
+    </table>
+
+</div>
+
+{% endblock content %}

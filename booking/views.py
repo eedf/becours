@@ -1,10 +1,14 @@
 from datetime import date, timedelta
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, DetailView
 from .models import Booking, BookingItem
 
 
 class BookingListView(ListView):
     queryset = Booking.objects.order_by('title')
+
+
+class BookingDetailView(DetailView):
+    model = Booking
 
 
 class OccupancyView(TemplateView):

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Occupation du terrain</h1>
+
+<table>
+    <tr>
+        <th>Jour</th>
+        <th>Effectif</th>
+    </tr>
+    {% for day, headcount in occupancy %}
+        <tr>
+            <td align="right">{{ day|date:'D d/m/y' }}</td>
+            <td align="right">{{ headcount }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock content %}

@@ -5,19 +5,31 @@
 
 <table>
     <tr>
-        <th>Organisation</th>
-        <th>État</th>
+        <th>Intitulé</th>
+        <th>Statut</th>
         <th>Contact</th>
         <th>Email</th>
         <th>Tel</th>
+        <th>Du</th>
+        <th>Au</th>
+        <th>Nuits</th>
+        <th>Effectif</th>
+        <th>Nuitées</th>
+        <th>Total</th>
     </tr>
     {% for booking in booking_list %}
         <tr>
-            <td>{{ booking.organization }}</td>
-            <td>{{ booking.state.label }}</td>
+            <td>{{ booking.title }}</td>
+            <td>{{ booking.state.title }}</td>
             <td>{{ booking.contact }}</td>
             <td>{{ booking.email }}</td>
             <td>{{ booking.tel }}</td>
+            <td align="right">{{ booking.begin|date:'D d/m/y' }}</td>
+            <td align="right">{{ booking.end|date:'D d/m/y' }}</td>
+            <td align="right">{{ booking.nights }}</td>
+            <td align="right">{{ booking.headcount }}</td>
+            <td align="right">{{ booking.overnights }}</td>
+            <td align="right">{{ booking.total|floatformat:2 }} €</td>
         </tr>
     {% endfor %}
 </table>

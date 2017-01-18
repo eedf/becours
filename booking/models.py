@@ -113,6 +113,26 @@ class Booking(TrackingMixin, models.Model):
     def __str__(self):
         return self.title
 
+    def begin(self):
+        return min(self.items.values_list('begin', flat=True))
+
+    def end(self):
+        return max(self.items.values_list('end', flat=True))
+
+    def nights(self):
+        begin = self.begin()
+        end = self.end()
+        return begin and end and (end - begin).days
+
+    def headcount(self):
+        return sum([item.headcount for item in self.items.all() if item.headcount])
+
+    def overnights(self):
+        return sum([item.overnights() for item in self.items.all() if item.overnights()])
+
+    def total(self):
+        return sum([item.total() for item in self.items.all() if item.total()])
+
 
 class BookingItem(TrackingMixin, models.Model):
     PRODUCT_CHOICES = (
@@ -133,3 +153,27 @@ class BookingItem(TrackingMixin, models.Model):
     price_pp = models.DecimalField(verbose_name="Prix/pers", max_digits=8, decimal_places=2, null=True, blank=True)
     price = models.DecimalField(verbose_name="Prix forfait", max_digits=8, decimal_places=2, null=True, blank=True)
     cotisation = models.BooleanField(verbose_name="Cotis° associé", default=True)
+
+    def __str__(self):
+        return self.title or self.get_product_display()
+
+    def nights(self):
+        return self.begin and self.end and (self.end - self.begin).days
+
+    def overnights(self):
+        nights = self.nights()
+        return nights and self.headcount and nights * self.headcount
+
+    def total(self):
+        euros = self.price or 0
+        nights = self.nights()
+        overnights = self.overnights()
+        if overnights and self.price_pppn:
+            euros += overnights * self.price_pppn
+        if nights and self.price_pn:
+            euros += nights * self.price_pn
+        if self.headcount and self.price_pp:
+            euros += self.headcount * self.price_pp
+        if self.cotisation and overnights:
+            euros += overnights
+        return euros or None

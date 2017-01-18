@@ -9,7 +9,7 @@ class BookingStateAdmin(admin.ModelAdmin):
 
 @admin.register(Agreement)
 class AgreementAdmin(admin.ModelAdmin):
-    list_display = ('number', 'date')
+    list_display = ('number', 'date', 'booking')
 
 
 class BookingItemInline(admin.TabularInline):
@@ -20,7 +20,7 @@ class BookingItemInline(admin.TabularInline):
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     inlines = (BookingItemInline, )
-    list_display = ('title', 'state', 'contact', 'email', 'tel')
+    list_display = ('title', 'state', 'contact', 'email', 'tel', 'agreement')
     list_filter = ('state', )
 
 

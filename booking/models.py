@@ -113,7 +113,7 @@ class Booking(TrackingMixin, models.Model):
     tel = models.CharField(verbose_name="Téléphone", max_length=12, blank=True)
     state = models.ForeignKey(BookingState, verbose_name="Statut", blank=True, null=True)
     description = models.TextField(verbose_name="Description", blank=True)
-    agreement = models.OneToOneField(Agreement, verbose_name="Convention", blank=True, null=True)
+    agreement = models.OneToOneField(Agreement, verbose_name="Convention", blank=True, null=True, related_name='booking')
 
     class Meta:
         verbose_name = "Réservation"

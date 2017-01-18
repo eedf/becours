@@ -1,23 +1,26 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 
-<h1>Occupation du terrain</h1>
+<div class="container-fluid">
 
-<table>
-    <tr>
-        <th>Jour</th>
-        <th>Effectif</th>
-        <th>Groupes</th>
-    </tr>
-    {% for day, headcount, items in occupancy %}
+    <h1>Occupation du terrain</h1>
+
+    <table class="table table-striped table-hover table-condensed">
         <tr>
-            <td align="right">{{ day|date:'D d/m/y' }}</td>
-            <td align="right">{{ headcount }}</td>
-            <td>{% for item in items %}{{ item.booking.title }} ({{ item.headcount }}){% if not forloop.last %}, {%endif %}{% endfor %}</td>
+            <th>Jour</th>
+            <th>Effectif</th>
+            <th>Groupes</th>
         </tr>
-    {% endfor %}
-</table>
+        {% for day, headcount, items in occupancy %}
+            <tr>
+                <td align="right">{{ day|date:'D d/m/y' }}</td>
+                <td align="right">{{ headcount }}</td>
+                <td>{% for item in items %}{{ item.booking.title }} ({{ item.headcount }}){% if not forloop.last %}, {%endif %}{% endfor %}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</div>
 
 {% endblock content %}

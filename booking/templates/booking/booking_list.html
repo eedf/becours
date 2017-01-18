@@ -1,43 +1,48 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 
-<table>
-    <tr>
-        <th>Intitulé</th>
-        <th>Statut</th>
-        <th>Contact</th>
-        <th>Email</th>
-        <th>Tel</th>
-        <th>Du</th>
-        <th>Au</th>
-        <th>Nuits</th>
-        <th>Effectif</th>
-        <th>Nuitées</th>
-        <th>Total</th>
-        <th>Arrhes</th>
-        <th>Paiement</th>
-        <th>Solde</th>
-    </tr>
-    {% for booking in booking_list %}
+<div class="container-fluid">
+
+    <h1>Récapitulatif</h1>
+
+    <table class="table table-striped table-hover table-condensed">
         <tr>
-            <td>{{ booking.title }}</td>
-            <td>{{ booking.state.title }}</td>
-            <td>{{ booking.contact }}</td>
-            <td>{{ booking.email }}</td>
-            <td>{{ booking.tel }}</td>
-            <td align="right">{{ booking.begin|date:'D d/m/y' }}</td>
-            <td align="right">{{ booking.end|date:'D d/m/y' }}</td>
-            <td align="right">{{ booking.nights|default_if_none:"" }}</td>
-            <td align="right">{{ booking.headcount|default_if_none:"" }}</td>
-            <td align="right">{{ booking.overnights|default_if_none:"" }}</td>
-            <td align="right">{% if booking.total %}{{ booking.total|floatformat:2 }} €{% endif %}</td>
-            <td align="right">{% if booking.deposit %}{{ booking.deposit|floatformat:2 }} €{%  endif %}</td>
-            <td align="right">{% if booking.payment %}{{ booking.payment|floatformat:2 }} €{%  endif %}</td>
-            <td align="right">{% if booking.balance %}{{ booking.balance|floatformat:2 }} €{%  endif %}</td>
+            <th>Intitulé</th>
+            <th>Statut</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Tel</th>
+            <th>Du</th>
+            <th>Au</th>
+            <th>Nuits</th>
+            <th>Effectif</th>
+            <th>Nuitées</th>
+            <th>Total</th>
+            <th>Arrhes</th>
+            <th>Paiement</th>
+            <th>Solde</th>
         </tr>
-    {% endfor %}
-</table>
+        {% for booking in booking_list %}
+            <tr>
+                <td>{{ booking.title }}</td>
+                <td>{{ booking.state.title }}</td>
+                <td>{{ booking.contact }}</td>
+                <td>{{ booking.email }}</td>
+                <td>{{ booking.tel }}</td>
+                <td align="right">{{ booking.begin|date:'D d/m/y' }}</td>
+                <td align="right">{{ booking.end|date:'D d/m/y' }}</td>
+                <td align="right">{{ booking.nights|default_if_none:"" }}</td>
+                <td align="right">{{ booking.headcount|default_if_none:"" }}</td>
+                <td align="right">{{ booking.overnights|default_if_none:"" }}</td>
+                <td align="right">{% if booking.total %}{{ booking.total|floatformat:2 }} €{% endif %}</td>
+                <td align="right">{% if booking.deposit %}{{ booking.deposit|floatformat:2 }} €{%  endif %}</td>
+                <td align="right">{% if booking.payment %}{{ booking.payment|floatformat:2 }} €{%  endif %}</td>
+                <td align="right">{% if booking.balance %}{{ booking.balance|floatformat:2 }} €{%  endif %}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</div>
 
 {% endblock content %}

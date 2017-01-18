@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.timezone import now
+from math import floor
 
 
 class TrackingEvent(models.Model):
@@ -122,10 +123,10 @@ class Booking(TrackingMixin, models.Model):
         return self.title
 
     def begin(self):
-        return min(self.items.values_list('begin', flat=True))
+        return min(self.items.values_list('begin', flat=True), default=None)
 
     def end(self):
-        return max(self.items.values_list('end', flat=True))
+        return max(self.items.values_list('end', flat=True), default=None)
 
     def nights(self):
         begin = self.begin()
@@ -133,13 +134,25 @@ class Booking(TrackingMixin, models.Model):
         return begin and end and (end - begin).days
 
     def headcount(self):
-        return sum([item.headcount for item in self.items.all() if item.headcount])
+        return sum([item.headcount for item in self.items.all() if item.headcount]) or None
 
     def overnights(self):
-        return sum([item.overnights() for item in self.items.all() if item.overnights()])
+        return sum([item.overnights() for item in self.items.all() if item.overnights()]) or None
 
     def total(self):
-        return sum([item.total() for item in self.items.all() if item.total()])
+        return sum([item.total() for item in self.items.all() if item.total()]) or None
+
+    def arrhes(self):
+        total = self.total()
+        return total and floor(self.total() * 0,3, 0)
+
+    def payment(self):
+        return sum(self.payments.values_list('amount', flat=True)) or None
+
+    def balance(self):
+        total = self.total()
+        payment = self.payment()
+        return total and payment and total - payment
 
 
 class BookingItem(TrackingMixin, models.Model):
@@ -185,3 +198,16 @@ class BookingItem(TrackingMixin, models.Model):
         if self.cotisation and overnights:
             euros += overnights
         return euros or None
+
+
+class Payment(models.Model):
+    MEAN_CHOICES = (
+        (1, "Chèque"),
+        (2, "Virement"),
+        (3, "Espèces"),
+    )
+    mean = models.IntegerField(verbose_name="Moyen de paiement", choices=MEAN_CHOICES)
+    date = models.DateField()
+    amount = models.DecimalField(verbose_name="Montant", max_digits=8, decimal_places=2)
+    booking = models.ForeignKey(Booking, related_name='payments', on_delete=models.CASCADE)
+

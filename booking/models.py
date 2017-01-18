@@ -1,4 +1,5 @@
 from cuser.middleware import CuserMiddleware
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -142,9 +143,9 @@ class Booking(TrackingMixin, models.Model):
     def total(self):
         return sum([item.total() for item in self.items.all() if item.total()]) or None
 
-    def arrhes(self):
+    def deposit(self):
         total = self.total()
-        return total and floor(self.total() * 0,3, 0)
+        return total and floor(total * Decimal('0.3'))
 
     def payment(self):
         return sum(self.payments.values_list('amount', flat=True)) or None

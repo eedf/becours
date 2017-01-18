@@ -4,7 +4,7 @@ from .models import Booking, BookingItem
 
 
 class BookingListView(ListView):
-    model = Booking
+    queryset = Booking.objects.order_by('title')
 
 
 class OccupancyView(TemplateView):

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    {% if form.errors %}
+        <p>Nom d'utilisateur ou mot de passe invalide.</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>
+                Votre compte n'a pas accès à cette page. Pour continuer,
+                merci de vous connecter avec un compte qui y a accès.
+            </p>
+        {% else %}
+            <p>Merci de vous connecter pour voir cette page.</p>
+        {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'auth:login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">{{ form.username.label_tag }}</label>
+            <input type="text" class="form-control" id="id_username" name="username">
+        </div>
+        <div class="form-group">
+            <label for="id_password">{{ form.password.label_tag }}</label>
+            <input type="password" class="form-control" id="id_password" name="password">
+        </div>
+
+        <button type="submit" class="btn btn-default">Connexion</button>
+        <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+
+    {# Assumes you setup the password_reset view in your URLconf #}
+    <p style="margin-top: 2em;">
+        <a href="{% url 'auth:password_reset' %}">Mot de passe perdu ?</a>
+    </p>
+
+</div>
+
+{% endblock %}

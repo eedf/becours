@@ -1,6 +1,14 @@
 from datetime import date, timedelta
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files import File
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils.text import slugify
+from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, DetailView
-from .models import Booking, BookingItem
+from os import unlink
+from templated_docs import fill_template
+from .models import Booking, BookingItem, Agreement
 
 
 class BookingListView(ListView):
@@ -9,6 +17,29 @@ class BookingListView(ListView):
 
 class BookingDetailView(DetailView):
     model = Booking
+
+
+class CreateAgreementView(LoginRequiredMixin, DetailView):
+    model = Booking
+
+    def render_to_response(self, context, **response_kwargs):
+        year = self.object.items.earliest('begin').begin.year
+        try:
+            order = Agreement.objects.filter(date__year=year).latest('order').order + 1
+        except Agreement.DoesNotExist:
+            order = 1
+        agreement = Agreement.objects.create(date=now().date(), order=order)
+        self.object.agreement = agreement
+        self.object.save()
+        context['agreement'] = agreement
+        filename = fill_template('booking/agreement.odt', context, output_format='odt')
+        visible_filename = "Convention_{number}_{title}.odt".format(number=agreement.number(),
+                                                                    title=slugify(self.object.title))
+        f = open(filename, 'rb')
+        agreement.odt.save(visible_filename, File(f))
+        f.close()
+        unlink(filename)
+        return HttpResponseRedirect(reverse('booking:booking_list'))
 
 
 class OccupancyView(TemplateView):

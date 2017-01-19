@@ -19,8 +19,9 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 urlpatterns = [
+    url(r'^', include('django.contrib.auth.urls', namespace='auth')),
+    url(r'^', include('booking.urls', namespace='booking')),
     url(r'^admin/', admin.site.urls),
-    url(r'', include('booking.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

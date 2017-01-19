@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.urls import reverse
 from django.utils.timezone import now
 from math import floor
 
@@ -122,6 +123,9 @@ class Booking(TrackingMixin, models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('booking:booking_detail', kwargs={'pk': self.pk})
 
     def begin(self):
         return min(self.items.values_list('begin', flat=True), default=None)

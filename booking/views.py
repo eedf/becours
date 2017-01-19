@@ -11,6 +11,10 @@ from templated_docs import fill_template
 from .models import Booking, BookingItem, Agreement
 
 
+class HomeView(TemplateView):
+    template_name = 'booking/home.html'
+
+
 class BookingListView(ListView):
     queryset = Booking.objects.order_by('title')
 

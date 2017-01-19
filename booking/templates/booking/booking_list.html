@@ -41,8 +41,8 @@
                 <td align="right">{% if booking.payment %}{{ booking.payment|floatformat:2 }} €{%  endif %}</td>
                 <td align="right">{% if booking.balance %}{{ booking.balance|floatformat:2 }} €{%  endif %}</td>
                 <td>
-                    {%  if booking.agreement and booking.agreement.odt %}
-                        <a href="{{ booking.agreement.odt.url }}">{{ booking.agreement.number }}</a>
+                    {%  if booking.agreement and booking.agreement.pdf %}
+                        <a href="{{ booking.agreement.pdf.url }}">{{ booking.agreement.number }}</a>
                     {% else %}
                         <a href="{% url 'booking:create_agreement' booking.id %}">créer</a>
                     {% endif %}

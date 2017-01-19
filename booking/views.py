@@ -32,13 +32,14 @@ class CreateAgreementView(LoginRequiredMixin, DetailView):
         self.object.agreement = agreement
         self.object.save()
         context['agreement'] = agreement
-        filename = fill_template('booking/agreement.odt', context, output_format='odt')
-        visible_filename = "Convention_{number}_{title}.odt".format(number=agreement.number(),
-                                                                    title=slugify(self.object.title))
-        f = open(filename, 'rb')
-        agreement.odt.save(visible_filename, File(f))
-        f.close()
-        unlink(filename)
+        for ext in ('odt', 'pdf'):
+            filename = fill_template('booking/agreement.odt', context, output_format=ext)
+            visible_filename = "Convention_{number}_{title}.{ext}".format(number=agreement.number(), ext=ext,
+                                                                          title=slugify(self.object.title))
+            f = open(filename, 'rb')
+            getattr(agreement, ext).save(visible_filename, File(f))
+            f.close()
+            unlink(filename)
         return HttpResponseRedirect(reverse('booking:booking_list'))
 
 

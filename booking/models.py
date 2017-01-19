@@ -90,7 +90,15 @@ class Agreement(models.Model):
 
 
 class BookingState(models.Model):
+    INCOME_CHOICES = (
+        (1, "Potentiel"),
+        (2, "Confirmé"),
+        (3, "Facturé"),
+        (4, "Infirmé"),
+        (5, "Annulé"),
+    )
     title = models.CharField(verbose_name="Intitulé", max_length=100)
+    income = models.IntegerField(verbose_name="Chiffre d'affaire", choices=INCOME_CHOICES)
 
     class Meta:
         verbose_name = "Statut"

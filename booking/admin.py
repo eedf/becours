@@ -4,7 +4,7 @@ from .models import BookingState, Booking, BookingItem, TrackingEvent, TrackingV
 
 @admin.register(BookingState)
 class BookingStateAdmin(admin.ModelAdmin):
-    list_display = ('title', )
+    list_display = ('title', 'income')
 
 
 @admin.register(Agreement)

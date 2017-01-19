@@ -47,8 +47,9 @@ class OccupancyView(TemplateView):
     template_name = 'booking/occupancy.html'
 
     def occupancy_for(self, day):
-        items = BookingItem.objects.filter(begin__lte=day, end__gt=day, product=1, headcount__isnull=False)
-        items = items.order_by('headcount', 'booking__title')
+        items = BookingItem.objects.filter(begin__lte=day, end__gt=day, product=1)
+        items = items.filter(booking__state__income__in=(1, 2, 3), headcount__isnull=False)
+        items = items.order_by('booking__title', '-headcount')
         return (sum([item.headcount for item in items]), items)
 
     def get_context_data(self, **kwargs):

@@ -64,6 +64,6 @@ class OccupancyView(TemplateView):
         occupancy = []
         for i in range(365):
             day = date(2017, 1, 1) + timedelta(days=i)
-            occupancy.append((day, ) + self.occupancy_for(day, 1) + self.occupancy_for(day, 2))
+            occupancy.append((day, ) + self.occupancy_for(day, 2) + self.occupancy_for(day, 1))
         context['occupancy'] = occupancy
         return context

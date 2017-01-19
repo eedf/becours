@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container-fluid">
 
     <h1>Occupation du terrain</h1>
 
@@ -11,10 +11,10 @@
             <th>Jour</th>
             <th></th>
             <th>Mois</th>
-            <th>Effectif Terrain</th>
-            <th>Groupes</th>
-            <th>Effectif Hameau</th>
-            <th>Groupes</th>
+            <th>Hameau</th>
+            <th></th>
+            <th>Terrain</th>
+            <th></th>
         </tr>
         {% for day, headcount1, items1, headcount2, items2 in occupancy %}
             {% if headcount1 or headcount2 %}

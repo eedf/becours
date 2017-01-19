@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container-fluid">
+<div class="container">
 
     <h1>Occupation du terrain</h1>
 
@@ -11,20 +11,30 @@
             <th>Jour</th>
             <th></th>
             <th>Mois</th>
-            <th>Effectif</th>
+            <th>Effectif Terrain</th>
+            <th>Groupes</th>
+            <th>Effectif Hameau</th>
             <th>Groupes</th>
         </tr>
-        {% for day, headcount, items in occupancy %}
-            {% if headcount %}
+        {% for day, headcount1, items1, headcount2, items2 in occupancy %}
+            {% if headcount1 or headcount2 %}
                 <tr>
                     <td>{{ day|date:'l' }}</td>
                     <td>{{ day|date:'d' }}</td>
                     <td>{{ day|date:'F' }}</td>
-                    <td><strong>{{ headcount }}</strong></td>
+                    <td><strong>{{ headcount1|default:"" }}</strong></td>
                     <td>
-                        {% for item in items %}
+                        {% for item in items1 %}
                             <span class="badge">{{ item.headcount }}</span>
-                            {{ item.booking.title }}
+                            {{ item.booking__title }}
+                            {% if not forloop.last %} + {%endif %}
+                        {% endfor %}
+                    </td>
+                    <td><strong>{{ headcount2|default:"" }}</strong></td>
+                    <td>
+                        {% for item in items2 %}
+                            <span class="badge">{{ item.headcount }}</span>
+                            {{ item.booking__title }}
                             {% if not forloop.last %} + {%endif %}
                         {% endfor %}
                     </td>

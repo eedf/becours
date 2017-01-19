@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
+from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.text import slugify
@@ -50,17 +51,19 @@ class CreateAgreementView(LoginRequiredMixin, DetailView):
 class OccupancyView(TemplateView):
     template_name = 'booking/occupancy.html'
 
-    def occupancy_for(self, day):
-        items = BookingItem.objects.filter(begin__lte=day, end__gt=day, product=1)
+    def occupancy_for(self, day, product):
+        items = BookingItem.objects.filter(begin__lte=day, end__gt=day, product=product)
         items = items.filter(booking__state__income__in=(1, 2, 3), headcount__isnull=False)
-        items = items.order_by('booking__title', '-headcount')
-        return (sum([item.headcount for item in items]), items)
+        items = items.order_by('booking__title')
+        items = items.values('booking__title')
+        items = items.annotate(headcount=Sum('headcount'))
+        return (sum([item['headcount'] for item in items]), items)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         occupancy = []
         for i in range(365):
             day = date(2017, 1, 1) + timedelta(days=i)
-            occupancy.append((day, ) + self.occupancy_for(day))
+            occupancy.append((day, ) + self.occupancy_for(day, 1) + self.occupancy_for(day, 2))
         context['occupancy'] = occupancy
         return context

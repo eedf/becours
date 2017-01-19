@@ -9,11 +9,13 @@
     <tr>
         <th>Jour</th>
         <th>Effectif</th>
+        <th>Groupes</th>
     </tr>
-    {% for day, headcount in occupancy %}
+    {% for day, headcount, items in occupancy %}
         <tr>
             <td align="right">{{ day|date:'D d/m/y' }}</td>
             <td align="right">{{ headcount }}</td>
+            <td>{% for item in items %}{{ item.booking.title }} ({{ item.headcount }}){% if not forloop.last %}, {%endif %}{% endfor %}</td>
         </tr>
     {% endfor %}
 </table>

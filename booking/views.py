@@ -64,7 +64,7 @@ class OccupancyView(TemplateView):
         items = BookingItem.objects.filter(begin__lte=day, end__gt=day, product=product)
         items = items.filter(booking__state__income__in=(1, 2, 3), headcount__isnull=False)
         items = items.order_by('booking__title')
-        items = items.values('booking__title')
+        items = items.values('booking__title', 'booking__state__color')
         items = items.annotate(headcount=Sum('headcount'))
         return (sum([item['headcount'] for item in items]), items)
 

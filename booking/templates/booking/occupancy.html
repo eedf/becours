@@ -22,18 +22,18 @@
                     <td>{{ day|date:'l' }}</td>
                     <td>{{ day|date:'d' }}</td>
                     <td>{{ day|date:'F' }}</td>
-                    <td><strong>{{ headcount1|default:"" }}</strong></td>
+                    <td><span class="badge">{{ headcount1|default:"" }}</span></td>
                     <td>
                         {% for item in items1 %}
-                            <span class="badge">{{ item.headcount }}</span>
+                            <span class="label label-{{ item.booking__state__color }}">{{ item.headcount }}</span>
                             {{ item.booking__title }}
                             {% if not forloop.last %} + {%endif %}
                         {% endfor %}
                     </td>
-                    <td><strong>{{ headcount2|default:"" }}</strong></td>
+                    <td><span class="badge">{{ headcount2|default:"" }}</span></td>
                     <td>
                         {% for item in items2 %}
-                            <span class="badge">{{ item.headcount }}</span>
+                            <span class="label label-{{ item.booking__state__color }}">{{ item.headcount }}</span>
                             {{ item.booking__title }}
                             {% if not forloop.last %} + {%endif %}
                         {% endfor %}

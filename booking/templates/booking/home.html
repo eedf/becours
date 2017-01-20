@@ -1,1 +1,20 @@
-{%  extends 'base.html' %}
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">CA potentiel</div>
+            <div class="col-md-2 text-right">{{ potentiel_income|floatformat:2 }} €</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">CA confirmé/facturé</div>
+            <div class="col-md-2 text-right">{{ confirmed_income|floatformat:2 }} €</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">CA total</div>
+            <div class="col-md-2 text-right">{{ total_income|floatformat:2 }} €</div>
+        </div>
+    </div>
+
+{% endblock content %}

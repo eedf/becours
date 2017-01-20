@@ -42,7 +42,10 @@
                     {%  if booking.agreement and booking.agreement.pdf %}
                         <a href="{{ booking.agreement.pdf.url }}">{{ booking.agreement.number }}</a>
                     {% else %}
-                        <a href="{% url 'booking:create_agreement' booking.id %}">créer</a>
+                        <a href="{% url 'booking:create_agreement' booking.id %}" class="btn btn-xs btn-primary">
+                            <span class="glyphicon glyphicon-file"></span>
+                            Créer
+                        </a>
                     {% endif %}
                 </td>
             </tr>

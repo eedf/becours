@@ -17,9 +17,9 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        potential_incomes = [item.total() for item in BookingItem.objects.filter(booking__state__income=1)]
+        potential_incomes = [item.amount for item in BookingItem.objects.filter(booking__state__income=1)]
         context['potentiel_income'] = sum(filter(bool, potential_incomes))
-        confirmed_incomes = [item.total() for item in BookingItem.objects.filter(booking__state__income__in=(2, 3))]
+        confirmed_incomes = [item.amount for item in BookingItem.objects.filter(booking__state__income__in=(2, 3))]
         context['confirmed_income'] = sum(filter(bool, confirmed_incomes))
         context['total_income'] = context['potentiel_income'] + context['confirmed_income']
         return context

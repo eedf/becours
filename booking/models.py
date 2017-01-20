@@ -180,15 +180,15 @@ class BookingItemManager(models.Manager):
         qs = super().get_queryset()
         qs = qs.annotate(nights=ExtractDay(F('end') - F('begin')))
         qs = qs.annotate(overnights=ExpressionWrapper(F('nights') * F('headcount'), output_field=models.DecimalField()))
-        amount_pppn = F('overnights') * F('price_pppn')
+        amount_pppn = Coalesce(F('overnights') * F('price_pppn'), 0)
         qs = qs.annotate(amount_pppn=ExpressionWrapper(amount_pppn, output_field=models.DecimalField()))
-        amount_pp = F('headcount') * F('price_pp')
+        amount_pp = Coalesce(F('headcount') * F('price_pp'), 0)
         qs = qs.annotate(amount_pp=ExpressionWrapper(amount_pp, output_field=models.DecimalField()))
-        amount_pn = F('nights') * F('price_pn')
+        amount_pn = Coalesce(F('nights') * F('price_pn'), 0)
         qs = qs.annotate(amount_pn=ExpressionWrapper(amount_pn, output_field=models.DecimalField()))
-        amount_cot = Case(When(cotisation=True, then=F('overnights')))
+        amount_cot = Coalesce(Case(When(cotisation=True, then=F('overnights'))), 0)
         qs = qs.annotate(amount_cot=ExpressionWrapper(amount_cot, output_field=models.DecimalField()))
-        qs = qs.annotate(amount=F('price') + F('amount_pppn') + F('amount_pp') + F('amount_pn') + F('amount_cot'))
+        qs = qs.annotate(amount=Coalesce(F('price'), 0) + F('amount_pppn') + F('amount_pp') + F('amount_pn') + F('amount_cot'))
         return qs
 
 

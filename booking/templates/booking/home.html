@@ -2,18 +2,18 @@
 
 {% block content %}
 
-    <div class="container">
+    <div class="container income">
         <div class="row">
             <div class="col-md-2">CA potentiel</div>
-            <div class="col-md-2 text-right">{{ potentiel_income|floatformat:2 }} €</div>
+            <div class="col-md-2 text-right"><span class="label label-warning">{{ potentiel_income|floatformat:2 }} €</span></div>
         </div>
         <div class="row">
             <div class="col-md-2">CA confirmé/facturé</div>
-            <div class="col-md-2 text-right">{{ confirmed_income|floatformat:2 }} €</div>
+            <div class="col-md-2 text-right"><span class="label label-primary">{{ confirmed_income|floatformat:2 }} €</span></div>
         </div>
         <div class="row">
             <div class="col-md-2">CA total</div>
-            <div class="col-md-2 text-right">{{ total_income|floatformat:2 }} €</div>
+            <div class="col-md-2 text-right"><span class="label label-default">{{ total_income|floatformat:2 }} €</span></div>
         </div>
     </div>
 

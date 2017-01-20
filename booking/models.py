@@ -174,6 +174,14 @@ class Booking(TrackingMixin, models.Model):
     def get_absolute_url(self):
         return reverse('booking:booking_detail', kwargs={'pk': self.pk})
 
+    @property
+    def terrain(self):
+        return self.items.filter(product=1).exists()
+
+    @property
+    def village(self):
+        return self.items.filter(product=2).exists()
+
 
 class BookingItemManager(models.Manager):
     def get_queryset(self):

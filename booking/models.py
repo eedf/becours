@@ -97,8 +97,17 @@ class BookingState(models.Model):
         (4, "Infirmé"),
         (5, "Annulé"),
     )
+    COLOR_CHOICES = (
+        ('default', "Gris"),
+        ('primary', "Bleu"),
+        ('success', "Vert"),
+        ('info', "Cyan"),
+        ('warning', "Orange"),
+        ('danger', "Rouge"),
+    )
     title = models.CharField(verbose_name="Intitulé", max_length=100)
     income = models.IntegerField(verbose_name="Chiffre d'affaire", choices=INCOME_CHOICES)
+    color = models.CharField(verbose_name="Couleur", max_length=10, choices=COLOR_CHOICES)
 
     class Meta:
         verbose_name = "Statut"

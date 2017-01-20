@@ -43,7 +43,7 @@
             <td></td>
         </tr>
         {% for item in booking.items.all %}
-            {%  if item.price_pppn %}
+            {% if item.price_pppn is not None %}
                 <tr>
                     <th>{% if item.intitule %}{{ item.intitule }}{% else %}{{ item.get_product_display }}{% endif %}</th>
                     <td>{{ item.price_pppn|floatformat:2 }} € x {{ item.headcount }} pers. x {{ item.nights }} nuits
@@ -51,14 +51,14 @@
                     <td class="text-right">{{ item.amount_pppn|floatformat:2 }} €</td>
                 </tr>
             {% endif %}
-            {%  if item.price_pp %}
+            {% if item.price_pp is not None %}
                 <tr>
                     <th>{% if item.intitule %}{{ item.intitule }}{% else %}{{ item.get_product_display }}{% endif %}</th>
                     <td>{{ item.price_pp|floatformat:2 }} € x {{ item.headcount }} pers.</td>
                     <td class="text-right">{{ item.amount_pp|floatformat:2 }} €</td>
                 </tr>
             {% endif %}
-            {%  if item.price_pn %}
+            {% if item.price_pn is not None %}
                 <tr>
                     <th>{% if item.intitule %}{{ item.intitule }}{% else %}{{ item.get_product_display }}{% endif %}</th>
                     <td>{{ item.price_pn|floatformat:2 }} € x {{ item.nights }} nuits
@@ -66,14 +66,14 @@
                     <td class="text-right">{{ item.amount_pn|floatformat:2 }} €</td>
                 </tr>
             {% endif %}
-            {%  if item.price %}
+            {% if item.price is not None %}
                 <tr>
                     <th>{% if item.intitule %}{{ item.intitule }}{% else %}{{ item.get_product_display }}{% endif %}</th>
                     <td>forfait</td>
                     <td class="text-right">{{ item.price|floatformat:2 }} €</td>
                 </tr>
             {% endif %}
-            {%  if item.cotisation %}
+            {% if item.cotisation %}
                 <tr>
                     <th>Cotisation EEDF membre associé</th>
                     <td>1,00 € x {{ item.headcount }} pers. x {{ item.nights }} nuits

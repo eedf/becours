@@ -1,6 +1,8 @@
 from cuser.middleware import CuserMiddleware
 from decimal import Decimal
 from django.db import models
+from django.db.models import Case, ExpressionWrapper, F, Min, Max, Sum, Value, When
+from django.db.models.functions import Coalesce, ExtractDay
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -72,7 +74,7 @@ class TrackingMixin(object):
         super().delete(*args, **kwargs)
 
 
-class Agreement(models.Model):
+class Agreement(TrackingMixin, models.Model):
     date = models.DateField(verbose_name="Date")
     order = models.IntegerField(verbose_name="Numéro d'ordre")
     odt = models.FileField(upload_to='conventions', blank=True)
@@ -89,7 +91,7 @@ class Agreement(models.Model):
         return self.number()
 
 
-class BookingState(models.Model):
+class BookingState(TrackingMixin, models.Model):
     INCOME_CHOICES = (
         (1, "Potentiel"),
         (2, "Confirmé"),
@@ -117,6 +119,32 @@ class BookingState(models.Model):
         return self.title
 
 
+class BookingManager(models.Manager):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.annotate(begin=Min('items__begin'), end=Max('items__end'))
+        qs = qs.annotate(nights=ExtractDay(F('end') - F('begin')))
+        qs = qs.annotate(headcount=Sum('items__headcount'))
+        overnights = ExtractDay(F('items__end') - F('items__begin')) * F('items__headcount')
+        qs = qs.annotate(overnights=ExpressionWrapper(Sum(overnights), output_field=models.DecimalField()))
+        qs = qs.annotate(price=Coalesce(Sum('items__price'), 0))
+        amount_pppn = ExtractDay(F('items__end') - F('items__begin')) * F('items__headcount') * F('items__price_pppn')
+        qs = qs.annotate(amount_pppn=ExpressionWrapper(Coalesce(Sum(amount_pppn), 0), output_field=models.DecimalField()))
+        amount_pp = F('items__headcount') * F('items__price_pp')
+        qs = qs.annotate(amount_pp=ExpressionWrapper(Coalesce(Sum(amount_pp), 0), output_field=models.DecimalField()))
+        amount_pn = ExtractDay(F('items__end') - F('items__begin')) * F('items__price_pn')
+        qs = qs.annotate(amount_pn=ExpressionWrapper(Coalesce(Sum(amount_pn), 0), output_field=models.DecimalField()))
+        sub_amount_cot = ExpressionWrapper(ExtractDay(F('items__end') - F('items__begin')) * F('items__headcount'),
+                                           output_field=models.DecimalField())
+        amount_cot = Case(When(items__cotisation=True, then=sub_amount_cot))
+        qs = qs.annotate(amount_cot=ExpressionWrapper(Coalesce(Sum(amount_cot), 0), output_field=models.DecimalField()))
+        qs = qs.annotate(amount=F('price') + F('amount_pppn') + F('amount_pp') + F('amount_pn') + F('amount_cot'))
+        qs = qs.annotate(deposit=F('amount') * .3)
+        qs = qs.annotate(payment=Sum('payments__amount'))
+        qs = qs.annotate(balance=F('amount') - F('payment'))
+        return qs
+
+
 class Booking(TrackingMixin, models.Model):
     ORG_TYPE_CHOICES = (
         (1, "EEDF"),
@@ -135,6 +163,8 @@ class Booking(TrackingMixin, models.Model):
     description = models.TextField(verbose_name="Description", blank=True)
     agreement = models.OneToOneField(Agreement, verbose_name="Convention", blank=True, null=True, related_name='booking')
 
+    objects = BookingManager()
+
     class Meta:
         verbose_name = "Réservation"
 
@@ -144,37 +174,22 @@ class Booking(TrackingMixin, models.Model):
     def get_absolute_url(self):
         return reverse('booking:booking_detail', kwargs={'pk': self.pk})
 
-    def begin(self):
-        return min(self.items.values_list('begin', flat=True), default=None)
 
-    def end(self):
-        return max(self.items.values_list('end', flat=True), default=None)
-
-    def nights(self):
-        begin = self.begin()
-        end = self.end()
-        return begin and end and (end - begin).days
-
-    def headcount(self):
-        return sum([item.headcount for item in self.items.all() if item.headcount]) or None
-
-    def overnights(self):
-        return sum([item.overnights() for item in self.items.all() if item.overnights()]) or None
-
-    def total(self):
-        return sum([item.total() for item in self.items.all() if item.total()]) or None
-
-    def deposit(self):
-        total = self.total()
-        return total and floor(total * Decimal('0.3'))
-
-    def payment(self):
-        return sum(self.payments.values_list('amount', flat=True)) or None
-
-    def balance(self):
-        total = self.total()
-        payment = self.payment()
-        return total and payment and total - payment
+class BookingItemManager(models.Manager):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.annotate(nights=ExtractDay(F('end') - F('begin')))
+        qs = qs.annotate(overnights=ExpressionWrapper(F('nights') * F('headcount'), output_field=models.DecimalField()))
+        amount_pppn = F('overnights') * F('price_pppn')
+        qs = qs.annotate(amount_pppn=ExpressionWrapper(amount_pppn, output_field=models.DecimalField()))
+        amount_pp = F('headcount') * F('price_pp')
+        qs = qs.annotate(amount_pp=ExpressionWrapper(amount_pp, output_field=models.DecimalField()))
+        amount_pn = F('nights') * F('price_pn')
+        qs = qs.annotate(amount_pn=ExpressionWrapper(amount_pn, output_field=models.DecimalField()))
+        amount_cot = Case(When(cotisation=True, then=F('overnights')))
+        qs = qs.annotate(amount_cot=ExpressionWrapper(amount_cot, output_field=models.DecimalField()))
+        qs = qs.annotate(amount=F('price') + F('amount_pppn') + F('amount_pp') + F('amount_pn') + F('amount_cot'))
+        return qs
 
 
 class BookingItem(TrackingMixin, models.Model):
@@ -197,32 +212,13 @@ class BookingItem(TrackingMixin, models.Model):
     price = models.DecimalField(verbose_name="Prix forfait", max_digits=8, decimal_places=2, null=True, blank=True)
     cotisation = models.BooleanField(verbose_name="Cotis° associé", default=True)
 
+    objects = BookingItemManager()
+
     def __str__(self):
         return self.title or self.get_product_display()
 
-    def nights(self):
-        return self.begin and self.end and (self.end - self.begin).days
 
-    def overnights(self):
-        nights = self.nights()
-        return nights and self.headcount and nights * self.headcount
-
-    def total(self):
-        euros = self.price or 0
-        nights = self.nights()
-        overnights = self.overnights()
-        if overnights and self.price_pppn:
-            euros += overnights * self.price_pppn
-        if nights and self.price_pn:
-            euros += nights * self.price_pn
-        if self.headcount and self.price_pp:
-            euros += self.headcount * self.price_pp
-        if self.cotisation and overnights:
-            euros += overnights
-        return euros or None
-
-
-class Payment(models.Model):
+class Payment(TrackingMixin, models.Model):
     MEAN_CHOICES = (
         (1, "Chèque"),
         (2, "Virement"),

@@ -36,8 +36,8 @@
             <td>{{ booking.overnights|default_if_none:"" }}</td>
         </tr>
         <tr>
-            <th>Total</th>
-            <td>{% if booking.total %}{{ booking.total|floatformat:2 }} €{% endif %}</td>
+            <th>Montant</th>
+            <td>{% if booking.amount %}{{ booking.amount|floatformat:2 }} €{% endif %}</td>
         </tr>
         <tr>
             <th>Arrhes</th>

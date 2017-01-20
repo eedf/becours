@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
-from django.db.models import Sum
+from django.db.models import Min, Sum
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.text import slugify
@@ -26,7 +26,7 @@ class HomeView(TemplateView):
 
 
 class BookingListView(ListView):
-    queryset = Booking.objects.order_by('title')
+    queryset = Booking.objects.order_by('begin')
 
 
 class BookingDetailView(DetailView):

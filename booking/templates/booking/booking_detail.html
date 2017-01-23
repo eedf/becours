@@ -102,6 +102,27 @@
             <td></td>
             <td class="text-right">{% if booking.balance %}{{ booking.balance|floatformat:2 }} €{%  endif %}</td>
         </tr>
+        {% for agreement in booking.agreements.all %}
+            <tr>
+                <th>Convention</th>
+                <td>
+                    {% if agreement.pdf %}<a href="{{ agreement.pdf.url }}">{{ agreement.number }}</a>{% endif %}
+                    {% if agreement.odt %}(<a href="{{ agreement.odt.url }}">éditer</a>){% endif %}
+                </td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        {% if booking.signed_agreement or booking.signed_agreement_scan %}
+            <tr>
+                <th>Convention signée</th>
+                <td>
+                    {% if booking.signed_agreement_scan %}<a href="{{ booking.signed_agreement_scan.url }}">{% endif %}
+                    {{ booking.signed_agreement.number }}
+                    {% if booking.signed_agreement_scan %}</a>{% endif %}
+                </td>
+                <td></td>
+            </tr>
+    {%  endif %}
     </table>
 
 </div>

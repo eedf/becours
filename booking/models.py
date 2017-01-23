@@ -79,9 +79,11 @@ class Agreement(TrackingMixin, models.Model):
     order = models.IntegerField(verbose_name="Numéro d'ordre")
     odt = models.FileField(upload_to='conventions', blank=True)
     pdf = models.FileField(upload_to='conventions', blank=True)
+    booking = models.ForeignKey('Booking', verbose_name="Réservation", related_name='agreements', null=True)
 
     class Meta:
         verbose_name = "Convention"
+        get_latest_by = 'date'
 
     def number(self):
         return "{year}-{order:03}".format(year=self.date.year, order=self.order)
@@ -161,7 +163,10 @@ class Booking(TrackingMixin, models.Model):
     tel = models.CharField(verbose_name="Téléphone", max_length=12, blank=True)
     state = models.ForeignKey(BookingState, verbose_name="Statut", blank=True, null=True)
     description = models.TextField(verbose_name="Description", blank=True)
-    agreement = models.OneToOneField(Agreement, verbose_name="Convention", blank=True, null=True, related_name='booking')
+    signed_agreement = models.OneToOneField(Agreement, verbose_name="N° convention signée", blank=True, null=True,
+                                            related_name='signedx_booking')
+    signed_agreement_scan = models.FileField(verbose_name="Scan convention signée", upload_to='conventions_signees',
+                                             blank=True)
 
     objects = BookingManager()
 
@@ -181,6 +186,10 @@ class Booking(TrackingMixin, models.Model):
     @property
     def village(self):
         return self.items.filter(product=2).exists()
+
+    @property
+    def agreement(self):
+        return self.agreements.latest()
 
 
 class BookingItemManager(models.Manager):

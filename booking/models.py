@@ -245,4 +245,4 @@ class Payment(TrackingMixin, models.Model):
     date = models.DateField()
     amount = models.DecimalField(verbose_name="Montant", max_digits=8, decimal_places=2)
     booking = models.ForeignKey(Booking, related_name='payments', on_delete=models.CASCADE)
-
+    scan = models.FileField(verbose_name="Scan", upload_to='paiements', blank=True)

@@ -20,7 +20,7 @@ class BookingItemInline(admin.TabularInline):
 
 class PaymentInline(admin.TabularInline):
     model = Payment
-    fields = ('mean', 'date', 'amount')
+    fields = ('mean', 'date', 'amount', 'scan')
 
 
 @admin.register(Booking)

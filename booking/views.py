@@ -47,9 +47,7 @@ class CreateAgreementView(LoginRequiredMixin, DetailView):
             order = Agreement.objects.filter(date__year=year).latest('order').order + 1
         except Agreement.DoesNotExist:
             order = 1
-        agreement = Agreement.objects.create(date=now().date(), order=order)
-        self.object.agreement = agreement
-        self.object.save()
+        agreement = Agreement.objects.create(date=now().date(), order=order, booking=self.object)
         context['agreement'] = agreement
         for ext in ('odt', 'pdf'):
             filename = fill_template('booking/agreement.odt', context, output_format=ext)
@@ -59,7 +57,7 @@ class CreateAgreementView(LoginRequiredMixin, DetailView):
             getattr(agreement, ext).save(visible_filename, File(f))
             f.close()
             unlink(filename)
-        return HttpResponseRedirect(reverse('booking:booking_list'))
+        return HttpResponseRedirect(reverse('booking:booking_detail', kwargs={'pk': self.object.pk}))
 
 
 class OccupancyView(TemplateView):

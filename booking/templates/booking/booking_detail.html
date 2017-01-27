@@ -111,6 +111,16 @@
                 </td>
                 <td></td>
             </tr>
+        {% empty %}
+            <tr>
+                <th>Convention</th>
+                <td>
+                    <a href="{% url 'booking:create_agreement' booking.id %}" class="btn btn-xs btn-primary">
+                        <span class="glyphicon glyphicon-file"></span>
+                        Créer
+                    </a>
+                <td></td>
+            </tr>
         {% endfor %}
         {% if booking.signed_agreement or booking.signed_agreement_scan %}
             <tr>

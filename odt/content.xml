@@ -1,12 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
                          xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+                         xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
+                         xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0"
+                         xmlns:xlink="http://www.w3.org/1999/xlink"
                          office:version="1.2">
-    <office:body>
-        <office:text>
-            <text:p>
-                Hello world!
-            </text:p>
-        </office:text>
-    </office:body>
+<office:body>
+<office:text>
+
+<draw:frame text:anchor-type="page" text:anchor-page-number="1" draw:style-name="Logo"
+            svg:width="3.46cm" svg:height="4.77cm">
+    <draw:image xlink:href="logo.png"/>
+</draw:frame>
+
+<text:p text:style-name="Titre">Convention de séjour n° {{ agreement.number }}</text:p>
+
+<text:p>Entre le Comité de Gestion et d’Animation du Centre national de Bécours, agissant pour le compte de
+l’association des Éclaireuses et Éclaireurs de France,</text:p>
+
+<text:p>d’une part,</text:p>
+
+<text:p>et {{ booking.contact }},{% if booking.email %} {{ booking.email }},{% endif %}{% if booking.tel %}
+{{ booking.tel }},{% endif %}{% if booking.org_type == 1 %} agissant pour le compte des EEDF
+{{ booking.title }},{% elif booking.org_type == 2 or booking.org_type == 3 %} agissant pour le compte du groupe
+scout {{ booking.title }},{% elif booking.org_type == 4 %} agissant pour le compte de l’association
+{{ booking.title }},{% elif booking.org_type == 5 %} agissant en son nom,{% elif booking.org_type == 6 %}
+agissant pour le compte de {{ booking.title }},{% endif %}</text:p>
+
+<text:p>d’autre part,</text:p>
+
+<text:p>il est convenu ce qui suit :</text:p>
+
+<text:p>1 – Le Centre de Bécours s’engage à accueillir :</text:p>
+
+<text:list>
+{% for item in booking.items.all %}
+<text:list-item>
+<text:p text:style-name="Enum">
+{{ item.headcount }} personnes{% if item.product == 1 %} en camping{% else %} dans le
+Hameau{% endif %}{% if item.nights %} pendant {{ item.nights }} nuit{{ item.nights|pluralize }} du
+{{ item.begin|date:'l j/m/Y' }} au {{ item.end|date:'l j/m/Y' }}{% endif %},
+</text:p>
+</text:list-item>
+{% endfor %}
+</text:list>
+
+<text:p>2 – Le séjour se déroulera en gestion libre et le groupe sera placé sous la responsabilité
+{% if booking.org_type == 1 or booking.org_type == 2 or booking.org_type == 3 %}du directeur de camp{% else %}de
+{{ booking.contact }}{% endif %}. De son côté, le Comité de Gestion et d’Animation de Bécours communiquera le nom et
+le numéro de téléphone de la personne à contacter en cas de problème lors du séjour.</text:p>
+
+<text:p>3 – Le centre de Bécours met à disposition du groupe :</text:p>
+<text:list>
+{% if booking.village %}
+<text:list-item><text:p text:style-name="Enum">un hébergement en dortoirs de 8 à 12 lits
+superposés,</text:p></text:list-item>
+<text:list-item><text:p text:style-name="Enum">des sanitaires (WC et douches),</text:p></text:list-item>
+<text:list-item><text:p text:style-name="Enum">une cuisine, une réserve, et un réfectoire
+équipés,</text:p></text:list-item>
+<text:list-item><text:p text:style-name="Enum">des salles d’activité équipées de tables et de
+chaises,</text:p></text:list-item>
+<text:list-item><text:p text:style-name="Enum">un coin feu.</text:p></text:list-item>
+{% endif %}
+{% if booking.terrain %}
+<text:list-item><text:p text:style-name="Enum">un terrain de camp,</text:p></text:list-item>
+<text:list-item><text:p text:style-name="Enum">des blocs sanitaires (WC et douches),</text:p></text:list-item>
+<text:list-item><text:p text:style-name="Enum">des espaces communs (chambres froides, salles d’activité, four à pain,
+grand barnum, coin feu…),</text:p></text:list-item>
+<text:list-item><text:p text:style-name="Enum">des perches pour le froissartage (à ne pas scier ou
+entailler).</text:p></text:list-item>
+{% endif %}
+</text:list>
+
+<text:p>Le cas échéant, ces espaces seront partagés avec les autres utilisateurs du centre.</text:p>
+
+<text:p>4 – Le prix du séjour est de :</text:p>
+<text:list>
+{% for item in booking.items.all %}
+<text:list-item><text:p text:style-name="Enum">{% if item.intitule %}{{ item.intitule }}{% else %}{{ item.get_product_display }}{% endif %} :
+{% if item.price %}{{ item.price|floatformat:2 }} €
+(forfait){% endif %}{% if item.price_pppn %}{{ item.price_pppn|floatformat:2 }} € par personne et par
+nuit{% endif %}{% if item.price_pp %}{{ item.price_pp|floatformat:2 }} € par personne
+{% endif %}{% if item.price_pn %}{{ item.price_pn|floatformat:2 }} € par nuit {% endif %}</text:p></text:list-item>
+{% endfor %}
+{% if booking.org_type != 1 %}
+<text:list-item><text:p text:style-name="Enum">Cotisation EEDF membre associé : 1,00 € par personne et par nuit</text:p></text:list-item>
+{% endif %}
+</text:list>
+
+<text:p>Le prix final sera arrêté en fonction du nombre effectif de présents.</text:p>
+
+<text:p>Les prestations supplémentaires et/ou toutes détériorations matérielles seront facturées en sus et devront être
+réglées avant le départ.</text:p>
+
+<text:p>5 – Adhésion : statutairement, il est nécessaire que tout bénéficiaire, utilisateur de nos installations, soit
+adhérent à l’association des EEDF.{% if booking.org_type == 1 %} Le responsable du camp devra s’en assurer.{% else %}
+Le groupe souscrit donc pour la période une adhésion EEDF (membre associé).{% endif %}</text:p>
+
+<text:p>6 – Le responsable du séjour s’engage à se conformer et à appliquer le règlement intérieur du Centre dont il a
+eu connaissance. Il s’engage aussi à faire appliquer les règles d’hygiène et de sécurité. Il devra assurer :
+le gardiennage, le nettoyage et le rangement des locaux et des abords.</text:p>
+
+<text:p>7 – A l’entrée dans les lieux, le responsable du séjour prendra connaissance de l’inventaire du matériel et de
+l’état des lieux. A l’issue du séjour, toute dégradation constatée et/ou heure de ménage nécessaire si le centre est
+remis non nettoyé devront être réglée.</text:p>
+
+<text:p>8 – Assurances</text:p>
+
+<text:p>{% if org_type != 1 %}Le responsable du séjour certifie {% if booking.org_type &lt;= 4 %}que son association est
+assurée{% else %}qu’il est assuré{% endif %} contre tous les risques (incendie, responsabilité civile, dégâts divers,
+etc...){% endif %}</text:p>
+
+<text:p>Le centre EEDF de Bécours est garanti par une assurance responsabilité civile auprès de :
+MAIF, 79038 NIORT Cedex 9, n° de sociétaire : 2033206 P.</text:p>
+
+<text:p>9 – Conformité du Centre</text:p>
+
+<text:p>Avis favorable de la commission de sécurité du 21/07/2016. Arrêté d’ouverture du
+26/07/2016.<text:line-break/>Agrément jeunesse et sports Local Accueil de Mineurs (hébergements) n° 12 291 0003</text:p>
+
+<text:p>10 – Le règlement du séjour sera effectué ainsi :</text:p>
+
+<text:p>Toute réservation ne sera considérée effective qu’à réception de cette convention signée, accompagnée des
+arrhes. Le solde est payable en début de séjour.</text:p>
+
+<text:p>Arrhes (30 % du montant prévisionnel) : {{ booking.amount|floatformat:2 }} x 30 % =
+{{ booking.deposit|floatformat:2 }} €</text:p>
+
+<text:p>Par un Virement Bancaire :<text:line-break/>Intitulé du compte : EEDF INV BECOURS<text:line-break/>IBAN :
+FR76 1010 7001 1800 8101 8846 220<text:line-break/>Code BIC : BREDFRPPXXX<text:line-break/>Domiciliation : BRED Paris
+agence Râpée – tél. : +33 8 20 33 61 18</text:p>
+
+<text:p>Ou par chèque en euro à l’ordre de « EEDF Bécours », à renvoyer à :<text:line-break/>E.E.D.F - Secrétariat
+Bécours<text:line-break/>Base de loisirs de Cantepau<text:line-break/>BP 90353<text:line-break/>81027 ALBI Cedex
+9</text:p>
+
+<text:p>Nous rappelons qu’en cas de désistement, les arrhes restent acquises au centre de Bécours.</text:p>
+
+<text:p>La présente convention est faite en deux exemplaires : un pour le Centre de Bécours et un pour l’organisateur
+du séjour.</text:p>
+
+<text:p>A Bécours (Verrières) le {{ agreement.date|date:"j/n/Y" }}</text:p>
+
+<text:p text:style-name="Signature"><draw:frame text:anchor-type="paragraph" draw:style-name="Signature"
+                                                svg:width="1.84cm" svg:height="1.36cm"
+                                                svg:x="11cm" svg:y="0.8cm">
+    <draw:image xlink:href="signature.png"/>
+</draw:frame>L’organisateur du séjour<text:tab/>Pour le Comité de Gestion et d’Animation de Bécours</text:p>
+
+<text:p>Faire précéder de sa signature de la mention « Lu et approuvé »</text:p>
+
+</office:text>
+</office:body>
 </office:document-content>

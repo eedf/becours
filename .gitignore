@@ -3,3 +3,4 @@
 *.pyc
 /becours/prod_settings.py
 /media/
+/static/

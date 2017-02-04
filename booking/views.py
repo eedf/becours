@@ -90,7 +90,7 @@ class StatsView(TemplateView):
             'headcount': sum([item.headcount for item in items if item.headcount]),
             'overnights': sum([item.overnights for item in items if item.overnights]),
             'amount_hosting': sum([item.amount - item.amount_cot for item in items if item.product in (1, 2, 5)]),
-            'amount_cot': sum([item.overnights for item in items if item.cotisation]),
+            'amount_cot': sum([item.overnights for item in items if item.overnights]),
             'amount_other': sum([item.amount for item in items if item.product in (3, 4)]),
             'amount': sum([item.amount for item in items]),
         }
@@ -114,7 +114,7 @@ class StatsView(TemplateView):
                 'headcount': sum([item.headcount for item in items if item.headcount]),
                 'overnights': sum([item.overnights for item in items if item.overnights]),
                 'amount_hosting': sum([item.amount - item.amount_cot for item in items if item.product in (1, 2, 5)]),
-                'amount_cot': sum([item.overnights for item in items if item.cotisation]),
+                'amount_cot': sum([item.overnights for item in items if item.overnights]),
                 'amount_other': sum([item.amount for item in items if item.product in (3, 4)]),
                 'amount': sum([item.amount for item in items]),
             }
